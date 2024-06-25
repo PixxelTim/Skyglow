@@ -2,23 +2,33 @@ import { useState } from "react";
 import axios from "axios";
 import axiosRetry from "axios-retry";
 
+type City = {
+  name: string;
+  regionCode: string;
+  countryCode: string;
+  latitude: string;
+  longitude: string;
+  label?: string;
+  value?: string; // Add the 'value' property
+};
+
 const Search = ({
   onSearchChange,
 }: {
   onSearchChange: (value: any) => void;
 }) => {
-  const [search, setSearch] = useState(null);
-  const [suggestions, setSuggestions] = useState([]);
-  const [selectedValue, setSelectedValue] = useState(null);
+  const [search, setSearch] = useState("");
+  const [suggestions, setSuggestions] = useState<City[]>([]);
+  const [selectedValue, setSelectedValue] = useState<string | null>(null);
 
-  const debounce = (func, wait) => {
-    let timeout;
-    return function executedFunction(...args) {
+  const debounce = (func: (...args: any[]) => any, wait: number) => {
+    let timeout: NodeJS.Timeout | null;
+    return function executedFunction(...args: any[]) {
       const later = () => {
-        clearTimeout(timeout);
+        clearTimeout(timeout!);
         func(...args);
       };
-      clearTimeout(timeout);
+      clearTimeout(timeout!);
       timeout = setTimeout(later, wait);
     };
   };
@@ -49,7 +59,7 @@ const Search = ({
         .map((term) => term.trim().toLowerCase());
 
       const filteredSuggestions = response.data.data
-        .filter((city) => {
+        .filter((city: City) => {
           const cityStringParts = [
             city.name.toLowerCase(),
             city.regionCode.toLowerCase(),
@@ -59,7 +69,7 @@ const Search = ({
             cityStringParts.some((part) => part.includes(term))
           );
         })
-        .map((city) => ({
+        .map((city: City) => ({
           value: `${city.latitude} ${city.longitude}`,
           label: `${city.name}, ${city.regionCode}, ${city.countryCode}`,
         }));
@@ -70,24 +80,24 @@ const Search = ({
     }
   };
 
-  const handleOnChange = (event) => {
+  const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchData = event.target.value;
     setSearch(searchData);
     setSelectedValue(null);
     debounce(() => loadOptions(searchData), 600)();
   };
 
-  const handleSelection = (event) => {
+  const handleSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedOption = suggestions.find(
       (option) => option.label === event.target.value
     );
     if (selectedOption) {
-      setSelectedValue(selectedOption.value);
+      setSelectedValue(selectedOption?.value || null);
       onSearchChange(selectedOption);
     }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.FormEvent<HTMLInputElement>) => {
     event.preventDefault();
     if (selectedValue) {
       onSearchChange(

@@ -1,51 +1,85 @@
 import { useState, useEffect } from "react";
+import Image, { StaticImageData } from "next/image";
 
-import Image from "next/image";
+import clearSkyDay from "./../../icons/clearSkyDay.svg";
+import clearSkyNight from "./../../icons/clearSkyNight.svg";
+import fewCloudsDay from "./../../icons/fewCloudsDay.svg";
+import fewCloudsNight from "./../../icons/fewCloudsNight.svg";
+import scatteredCloudsDay from "./../../icons/scatteredCloudsDay.svg";
+import scatteredCloudsNight from "./../../icons/scatteredCloudsNight.svg";
+import brokenCloudsDay from "./../../icons/brokenCloudsDay.svg";
+import brokenCloudsNight from "./../../icons/brokenCloudsNight.svg";
+import showerRainDay from "./../../icons/showerRainDay.svg";
+import showerRainNight from "./../../icons/showerRainNight.svg";
+import rainDay from "./../../icons/rainDay.svg";
+import rainNight from "./../../icons/rainNight.svg";
+import thunderstormDay from "./../../icons/thunderstormDay.svg";
+import thunderstormNight from "./../../icons/thunderstormNight.svg";
+import snowDay from "./../../icons/snowDay.svg";
+import snowNight from "./../../icons/snowNight.svg";
+import mistDay from "./../../icons/mistDay.svg";
+import mistNight from "./../../icons/mistNight.svg";
 
-const CurrentWeather = ({ data }) => {
-  const [iconSrc, setIconSrc] = useState<string | StaticImport>(null);
+interface WeatherData {
+  weather: { icon: string; description: string }[];
+  main: {
+    temp: number;
+    feels_like: number;
+    humidity: number;
+    pressure: number;
+  };
+  wind: { speed: number };
+  city: string;
+}
+
+interface CurrentWeatherProps {
+  data: WeatherData;
+}
+
+const CurrentWeather = ({ data }: CurrentWeatherProps) => {
+  const [iconSrc, setIconSrc] = useState<string | StaticImageData | null>(null);
 
   useEffect(() => {
-    const loadIcon = async () => {
+    const loadIcon = () => {
       const icon = data.weather[0].icon;
-      const imageSrc = await getImageSrc(icon);
+      const imageSrc = getImageSrc(icon);
       setIconSrc(imageSrc);
     };
 
     loadIcon();
   }, [data.weather]);
 
-  const getImageSrc = (icon) => {
-    const imageMap = {
-      "01d": import("./../../icons/clearSkyDay.svg"),
-      "01n": import("./../../icons/clearSkyNight.svg"),
-      "02d": import("./../../icons/fewCloudsDay.svg"),
-      "02n": import("./../../icons/fewCloudsNight.svg"),
-      "03d": import("./../../icons/scatteredCloudsDay.svg"),
-      "03n": import("./../../icons/scatteredCloudsNight.svg"),
-      "04d": import("./../../icons/brokenCloudsDay.svg"),
-      "04n": import("./../../icons/brokenCloudsNight.svg"),
-      "09d": import("./../../icons/showerRainDay.svg"),
-      "09n": import("./../../icons/showerRainNight.svg"),
-      "10d": import("./../../icons/rainDay.svg"),
-      "10n": import("./../../icons/rainNight.svg"),
-      "11d": import("./../../icons/thunderstormDay.svg"),
-      "11n": import("./../../icons/thunderstormNight.svg"),
-      "13d": import("./../../icons/snowDay.svg"),
-      "13n": import("./../../icons/snowNight.svg"),
-      "50d": import("./../../icons/mistDay.svg"),
-      "50n": import("./../../icons/mistNight.svg"),
+  const getImageSrc = (icon: string): StaticImageData | null => {
+    const imageMap: { [key: string]: StaticImageData } = {
+      "01d": clearSkyDay,
+      "01n": clearSkyNight,
+      "02d": fewCloudsDay,
+      "02n": fewCloudsNight,
+      "03d": scatteredCloudsDay,
+      "03n": scatteredCloudsNight,
+      "04d": brokenCloudsDay,
+      "04n": brokenCloudsNight,
+      "09d": showerRainDay,
+      "09n": showerRainNight,
+      "10d": rainDay,
+      "10n": rainNight,
+      "11d": thunderstormDay,
+      "11n": thunderstormNight,
+      "13d": snowDay,
+      "13n": snowNight,
+      "50d": mistDay,
+      "50n": mistNight,
     };
 
-    return imageMap[icon];
+    return imageMap[icon] || null;
   };
 
-  const celvinToCelsius = (kelvin) => {
+  const kelvinToCelsius = (kelvin: number): number => {
     return kelvin - 273.15;
   };
 
-  const temperature = celvinToCelsius(data.main.temp).toFixed(1);
-  const feelsLike = celvinToCelsius(data.main.feels_like).toFixed(1);
+  const temperature = kelvinToCelsius(data.main.temp).toFixed(1);
+  const feelsLike = kelvinToCelsius(data.main.feels_like).toFixed(1);
   const windSpeed = data.wind.speed;
   const humidity = data.main.humidity;
   const pressure = data.main.pressure;

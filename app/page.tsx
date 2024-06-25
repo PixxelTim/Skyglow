@@ -1,20 +1,43 @@
 "use client";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import Search from "./components/search/search";
 import CurrentWeather from "./components/weather/currentWeather";
 
-export default function Page() {
-  const [currentWeather, setCurrentWeather] = useState(null);
+interface SearchData {
+  value: string;
+  label: string;
+}
 
-  const handleOnSearchChange = (searchData: any) => {
+interface WeatherData {
+  city: string;
+  weather: { icon: string; description: string }[];
+  main: {
+    temp: number;
+    feels_like: number;
+    humidity: number;
+    pressure: number;
+  };
+  wind: { speed: number };
+}
+
+export default function Page() {
+  const [currentWeather, setCurrentWeather] = useState<WeatherData | null>(
+    null
+  );
+
+  const handleOnSearchChange = (searchData: SearchData) => {
     console.log(searchData);
     const [lat, lon] = searchData.value.split(" ");
     getWeather(lat, lon, searchData);
   };
 
-  const getWeather = async (lat, lon, searchData) => {
-    const options = {
+  const getWeather = async (
+    lat: string,
+    lon: string,
+    searchData: SearchData
+  ) => {
+    const options: AxiosRequestConfig = {
       method: "GET",
       url: `https://open-weather13.p.rapidapi.com/city/latlon/${lat}/${lon}`,
       headers: {
@@ -23,14 +46,12 @@ export default function Page() {
       },
     };
 
-    const response = await axios
-      .request(options)
-      .then(function (response) {
-        setCurrentWeather({ city: searchData.label, ...response.data });
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
+    try {
+      const response = await axios.request(options);
+      setCurrentWeather({ city: searchData.label, ...response.data });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
