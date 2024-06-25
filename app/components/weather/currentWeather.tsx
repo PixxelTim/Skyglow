@@ -15,7 +15,7 @@ const CurrentWeather = ({ data }) => {
     loadIcon();
   }, [data.weather]);
 
-  const getImageSrc = async (icon) => {
+  const getImageSrc = (icon) => {
     const imageMap = {
       "01d": import("./../../icons/clearSkyDay.svg"),
       "01n": import("./../../icons/clearSkyNight.svg"),
@@ -37,14 +37,7 @@ const CurrentWeather = ({ data }) => {
       "50n": import("./../../icons/mistNight.svg"),
     };
 
-    try {
-      const module =
-        (await imageMap[icon]) || import("./../../icons/clearSkyDay.svg");
-      return module.default;
-    } catch (error) {
-      console.error("Failed to load icon", error);
-      return null;
-    }
+    return imageMap[icon];
   };
 
   const celvinToCelsius = (kelvin) => {
