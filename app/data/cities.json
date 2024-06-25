@@ -1,0 +1,32 @@
+[
+  {
+    "id": 3837621,
+    "wikiDataId": "Q1017",
+    "type": "CITY",
+    "city": "Aachen",
+    "name": "Aachen",
+    "country": "Deutschland",
+    "countryCode": "DE",
+    "region": "Nordrhein-Westfalen",
+    "regionCode": "NW",
+    "regionWdId": "Q1198",
+    "latitude": 50.77664,
+    "longitude": 6.08342,
+    "population": 252136
+  },
+  {
+    "id": 3453293,
+    "wikiDataId": "Q1017",
+    "type": "CITY",
+    "city": "Aachen",
+    "name": "Aachen",
+    "country": "Deutschland",
+    "countryCode": "DE",
+    "region": "Nordrhein-Westfalen",
+    "regionCode": "NW",
+    "regionWdId": "Q1198",
+    "latitude": 50.77603,
+    "longitude": 6.08723,
+    "population": 252136
+  }
+]
